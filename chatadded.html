@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+
+    <!-- LINK TO FIREBASE JAVASCRIPT  -->
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script> <!-- ***** -->
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script> 
+    <link rel='stylesheet' type='text/css' href='/resources/tutorial/css/example.css'>
+  </head>
+  <body>
+    <div id='messagesDiv'></div>
+    <input type='text' id='nameInput' placeholder='Name'>
+    <input type='text' id='messageInput' placeholder='Message'>
+    <script>
+
+
+      var myDataRef = new Firebase('https://rps2016-7cea3.firebaseio.com//'); // <------- Referencing our App on Firebase website.
+
+      $('#messageInput').keypress(function (e) { // <----------------- If keypress is 13 (enter) then do the stuff bottom 
+        if (e.keyCode == 13) {
+          var name = $('#nameInput').val();  // < ------------------- Get text box
+          var text = $('#messageInput').val();
+
+          myDataRef.push({name: name, text: text}); // <----------------------- Pushing object to firebase record system
+          $('#messageInput').val(''); // <---------------------- Clearing out the text box
+        }
+      });
+
+
+      myDataRef.on('child_added', function(snapshot) { // <----------------------- taking records and putting it into snapshot
+
+        var message = snapshot.val(); // <------------------------------------ storing the value in a message variable 
+        displayChatMessage(message.name, message.text); // <--------------- Get values from the object.
+      });
+      function displayChatMessage(name, text) { // <--------------------------- display to html 
+        $('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+        $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+      };
+    </script>
+  </body>
+</html>
